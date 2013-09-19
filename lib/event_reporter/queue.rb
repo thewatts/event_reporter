@@ -1,17 +1,19 @@
 module EventReporter
 
-  attr_accessor :values
-
   class Queue
-    @values = []
-  end
+    attr_accessor :items
 
-  def count
-    @values.count
-  end
+    def initialize
+      @items = []
+    end
 
-  def reset
-    @values = []
+    def count
+      @items.count
+    end
+
+    def clear
+      @items = []
+    end
   end
 
 end

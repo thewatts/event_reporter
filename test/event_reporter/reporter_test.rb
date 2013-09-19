@@ -41,18 +41,14 @@ class ReporterTest < MiniTest::Test
     assert_respond_to @er, :process_command
   end
 
-  def test_default_file
-    assert_equal "event_attendees.csv", @er.default_file
-  end
-
   def test_it_loads_filename
     filename = "sample.csv"
     @er.load(filename)
-    assert_equal @er.filename, "./lib/#{filename}"
+    assert_equal @er.filename, filename
   end
 
   def test_it_loads_default_filename_if_no_filename_provided
-    default_filename = "./lib/event_attendees.csv"
+    default_filename = "event_attendees.csv"
     @er.load
     assert_equal @er.filename, default_filename
   end
@@ -67,6 +63,7 @@ class ReporterTest < MiniTest::Test
 
   def test_it_should_find_criteria_based_on_an_attribute
     @stubbed_er = StubbedEventReporter.new
+    @stubbed_er.load
     @stubbed_er.find("first_name", "sarah")
     assert_equal 2, @stubbed_er.queue.count
   end
@@ -133,7 +130,6 @@ class ReporterTest < MiniTest::Test
     @stubbed_er.find
     results = "Hankins         SArah       pinalevitsky@jumpstartlab.com          20009       Washington              DC     2022 15th Street NW                  4145205000"
     assert_respond_to @stubbed_er, :attendee_output
-    assert_equal results, @stubbed_er.attendee_output(@stubbed_er.queue[0])
+    assert_equal results, @stubbed_er.attendee_output(@stubbed_er.queue.items[0])
   end
-
 end

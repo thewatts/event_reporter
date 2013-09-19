@@ -1,5 +1,9 @@
-require './lib/event_reporter/data_store'
+require './lib/event_reporter/loader'
+require './lib/event_reporter/parser'
+#require './lib/event_reporter/printer'
+#require './lib/event_reporter/writer'
 require './lib/event_reporter/queue'
+
 
 module EventReporter
   class Reporter
@@ -7,7 +11,9 @@ module EventReporter
     attr_reader :filename, :queue
 
     def initialize
-      @queue = []
+      @queue  = EventReporter::Queue.new
+      @loader = EventReporter::Loader.new
+      @loader.default_filename = default_filename
     end
 
     def run
@@ -34,46 +40,43 @@ module EventReporter
       end
     end
 
+    def default_filename
+      "event_attendees.csv"   
+    end
+
+    def filename
+      @loader.filename
+    end
+
     def load(filename = nil)
-      unless filename.nil?
-        @filename = "./lib/#{filename}"
-      else
-        @filename = "./lib/#{default_file}"
-      end
-      load_file_data
-    end
-
-    def reset_queue
-      @queue = []
-    end
-
-    def default_file
-      "event_attendees.csv"
-    end
-
-    def load_file_data
-      @loaded_data = CSV.read @filename, headers: true,
-                     header_converters: :symbol if File.exists?(@filename)
+      @loaded_data = @loader.load(filename)
     end
 
     def data
       @loaded_data
     end
 
+    def reset_queue
+      @queue.clear
+    end
+
+
     def find(attribute = nil, criteria = nil)
+      @parser ||= EventReporter::Parser.new
       reset_queue
-      if attribute && criteria
-        valid_attribute = attribute.downcase.to_sym
-        valid_criteria  = criteria.downcase
-        @queue = data.find_all { |row| row[valid_attribute].downcase == valid_criteria }
-      else
-        @queue = data.collect { |row| row }
+
+      if @loaded_data
+        if attribute && criteria
+          @queue.items = @parser.find_all(data, attribute, criteria)
+        else
+          @queue.items = @parser.collect(data)
+        end
       end
     end
 
     def print_queue(criteria = nil)
-      unless @queue.empty?
-        print @queue if criteria.nil?
+      unless @queue.items.empty?
+        print @queue.items if criteria.nil?
         eval 'setup_for_print(criteria); print_data @queue'
       end
     end
@@ -89,7 +92,7 @@ module EventReporter
     end
 
     def print_attendees
-      @queue.each { |attendee| print attendee_output(attendee) }
+      @queue.items.each { |attendee| print attendee_output(attendee) }
     end
 
     def attendee_output(attendee)
@@ -102,7 +105,7 @@ module EventReporter
 
     def setup_for_print(criteria)
       criteria.to_sym
-      @queue.sort_by { |item| item[criteria] }
+      @queue.items.sort_by { |item| item[criteria] }
     end
 
   end

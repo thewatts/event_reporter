@@ -3,7 +3,8 @@
 
 guard :minitest do
   # with Minitest::Unit
-  watch(%r{^lib/event_reporter/(.*/)?([^/]+)\.rb})     { |m| "test/event_reporter/#{m[1]}test_#{m[2]}.rb" }
+  watch(%r{^test/event_reporter(.*)\/?_test(.*)\.rb})
+  watch(%r{^lib/event_reporter/(.*/)?([^/]+)\.rb})     { |m| "test/event_reporter/#{m[2]}_test.rb" }
   watch(%r{^test/test_helper\.rb})      { 'test' }
 
   # with Minitest::Spec
