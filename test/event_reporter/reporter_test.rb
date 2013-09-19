@@ -104,11 +104,13 @@ class ReporterTest < MiniTest::Test
 
   def test_it_prints_queue_with_criteria
     @stubbed_er = StubbedEventReporter.new
+    @stubbed_er.load
     @stubbed_er.find("first_name", "sarah")
     assert_output("Size: 2") { print "Size: #{@stubbed_er.queue.count}"}
   end
 
   def test_it_should_setup_for_print
+    @stubbed_er.load
     @stubbed_er.find
     results =
       [
@@ -116,8 +118,8 @@ class ReporterTest < MiniTest::Test
         {:first_name => "Frank"},
         {:first_name => "Jacob"},
         {:first_name => "Jason"},
-        {:first_name => "Sarah"},
         {:first_name => "SArah"},
+        {:first_name => "Sarah"},
         {:first_name => "Tony"},
         {:first_name => "Zander"},
       ]

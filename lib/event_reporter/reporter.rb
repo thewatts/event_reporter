@@ -105,7 +105,8 @@ module EventReporter
 
     def setup_for_print(criteria)
       criteria.to_sym
-      @queue.items.sort_by { |item| item[criteria] }
+      items = @queue.items.sort_by { |item| item[criteria.to_sym] }
+      #binding.pry
     end
 
   end
