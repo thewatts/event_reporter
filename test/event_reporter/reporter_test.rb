@@ -1,7 +1,10 @@
 require './test/test_helper'
 require './lib/event_reporter/reporter'
 
+
 class ReporterTest < MiniTest::Test
+
+  #parallelize_me!()
 
   class StubbedEventReporter < EventReporter::Reporter
     def data
