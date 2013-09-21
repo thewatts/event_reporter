@@ -12,7 +12,7 @@ class AttendeeTest < MiniTest::Test
       :street        => "4175 3rd Street North",
       :city          => "Saint Petersburg",
       :state         => "FL",
-      :zipcode       => "33703",
+      :zipcode       => "3703",
       :regdate       => "11/12/08 13:23",
     }
     @attendee = EventReporter::Attendee.new(@data)
@@ -23,12 +23,17 @@ class AttendeeTest < MiniTest::Test
     assert_equal @data[:first_name],    @attendee.first_name
     assert_equal @data[:last_name],     @attendee.last_name
     assert_equal @data[:email_address], @attendee.email_address
-    assert_equal @data[:homephone],     @attendee.homephone
+    assert_equal "1235551212",          @attendee.homephone
     assert_equal @data[:street],        @attendee.street
     assert_equal @data[:city],          @attendee.city
     assert_equal @data[:state],         @attendee.state
-    assert_equal @data[:zipcode],       @attendee.zipcode
+    assert_equal "03703",               @attendee.zipcode
     assert_equal @data[:regdate],       @attendee.regdate
+  end
+
+  def test_it_cleans_field_data
+    attendee = EventReporter::Attendee.new(:first_name => nil)
+    assert_equal "", attendee.first_name
   end
 
 end

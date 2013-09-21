@@ -13,7 +13,7 @@ module EventReporter
       valid_attribute = validate_attribute(attribute)
       valid_criteria  = validate_criteria(criteria)
 
-      data.find_all { |row| row[valid_attribute].downcase == valid_criteria if row[valid_attribute] }
+      data.find_all { |row| row.send(valid_attribute).downcase == valid_criteria }
     end
 
     def collect(data)

@@ -1,3 +1,4 @@
+require './lib/event_reporter/attendee'
 require './lib/event_reporter/loader'
 require './lib/event_reporter/parser'
 #require './lib/event_reporter/printer'
@@ -26,7 +27,7 @@ module EventReporter
         input   = gets.chomp
         parts   = input.split(" ")
         command = parts[0]
-        process_command(command, parts)
+       process_command(command, parts)
       end
     end
 
@@ -49,7 +50,7 @@ module EventReporter
     end
 
     def load(filename = nil)
-      @loaded_data = @loader.load(filename)
+      @loaded_data = make_attendees(@loader.load(filename))
     end
 
     def data
@@ -60,17 +61,20 @@ module EventReporter
       @queue.clear
     end
 
+    def make_attendees(attendee_data = nil)
+      attendee_data.collect { |d| Attendee.new(d) } if attendee_data
+    end
 
     def find(attribute = nil, criteria = nil)
-      @parser ||= EventReporter::Parser.new
       reset_queue
+      return unless @loaded_data
 
-      if @loaded_data
-        if attribute && criteria
-          @queue.items = @parser.find_all(data, attribute, criteria)
-        else
-          @queue.items = @parser.collect(data)
-        end
+      @parser ||= EventReporter::Parser.new
+
+      if attribute && criteria
+        @queue.items = @parser.find_all(data, attribute, criteria)
+      else
+        @queue.items = @parser.collect(data)
       end
     end
 

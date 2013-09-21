@@ -1,4 +1,5 @@
 require './test/test_helper'
+require './lib/event_reporter/attendee'
 require './lib/event_reporter/parser'
 
 class ParserTest < MiniTest::Test
@@ -14,7 +15,7 @@ class ParserTest < MiniTest::Test
   def test_it_should_find_all_correctly
     attribute = "first_name"
     criteria  = "Sarah"
-    data = 
+    attendee_data = 
       [
         {:first_name => "Frank"},
         {:first_name => "Adam"},
@@ -25,6 +26,7 @@ class ParserTest < MiniTest::Test
         {:first_name => "Jason"},
         {:first_name => "SArah"},
       ]
+    data = attendee_data.collect { |a_data| EventReporter::Attendee.new(a_data) } 
 
     results = @parser.find_all(data, attribute, criteria)
     assert_equal 2, results.count

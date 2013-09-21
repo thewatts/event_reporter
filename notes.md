@@ -114,3 +114,6 @@ Hash[*data] # => {:food => "pizza", :color => "blue"}
 ```
 
 # COMMAND COORDINATOR
+#
+
+# ERRORS ON CLASSES
